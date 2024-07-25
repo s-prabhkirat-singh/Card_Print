@@ -42,9 +42,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "product_categories",
-      timestamps: true, // Disable timestamps for this model
+      timestamps: true, // Enable timestamps for this model
     }
   );
+
+  // Define the self-referential association with unique aliases
+  Product_Categories.hasMany(Product_Categories, { as: 'Children', foreignKey: 'parent_id' });
+  Product_Categories.belongsTo(Product_Categories, { as: 'Parent', foreignKey: 'parent_id' });
 
   return Product_Categories;
 };

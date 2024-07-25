@@ -71,23 +71,23 @@ const add_parent_category = async (req, res) => {
   }
 };
 
-const delete_parent_category = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const category = await Product_Categories.destroy({
-      where: {
-        [Op.or]: [{ id: id }, { parent_id: id }],
-      },
-    });
-    if (category == 1) {
-      res.status(200).json("Deleted Successfully");
-    } else {
-      res.status(404).json("Not Found");
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+// const delete_parent_category = async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const category = await Product_Categories.destroy({
+//       where: {
+//         [Op.or]: [{ id: id }, { parent_id: id }],
+//       },
+//     });
+//     if (category == 1) {
+//       res.status(200).json("Deleted Successfully");
+//     } else {
+//       res.status(404).json("Not Found");
+//     }
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 
 const update_category = async (req, res) => {
   const { id } = req.params;
@@ -121,9 +121,16 @@ const view_child_categories = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const data = await Product_Categories.findAll({ where: { parent_id: id } });
+    const data = await Product_Categories.findAll({
+      where: { parent_id: id },
+      order: [["sequence", "ASC"]],
+    });
+    const parent = await Product_Categories.findOne({
+      where: { id: id },
+      attributes: ["name", "id"],
+    });
 
-    res.status(200).json(data);
+    res.status(200).json([parent, data]);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -147,13 +154,77 @@ const add_child_category = async (req, res) => {
   }
 };
 
+// const delete_child_category = async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const category = await Product_Categories.destroy({
+//       where: {
+//         id: id,
+//       },
+//     });
+//     if (category == 1) {
+//       res.status(200).json("Deleted Successfully");
+//     } else {
+//       res.status(404).json("Not Found");
+//     }
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+const delete_category = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Function to get all child ids recursively
+    const getAllChildIds = async (parentId) => {
+      const children = await Product_Categories.findAll({
+        where: { parent_id: parentId },
+        attributes: ["id"],
+      });
+
+      let childIds = children.map((child) => child.id);
+
+      for (let childId of childIds) {
+        const grandChildIds = await getAllChildIds(childId);
+        childIds = [...childIds, ...grandChildIds];
+      }
+
+      return childIds;
+    };
+
+    // Get all child ids
+    const childIds = await getAllChildIds(id);
+
+    // Delete the category and all its children
+    const deletedCount = await Product_Categories.destroy({
+      where: {
+        id: {
+          [Op.in]: [id, ...childIds],
+        },
+      },
+    });
+
+    if (deletedCount > 0) {
+      res
+        .status(200)
+        .json(`Deleted Successfully. ${deletedCount} categories were removed.`);
+    } else {
+      res.status(404).json("Category not found");
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getCategories,
   addCategory,
   get_all_parent_categories,
   view_child_categories,
   add_parent_category,
-  delete_parent_category,
+
   update_category,
   add_child_category,
+  delete_category,
 };
