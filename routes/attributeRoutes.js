@@ -3,9 +3,11 @@ const router = express.Router();
 
 const atrributeController = require("../controllers/attributeController");
 
+//Attribute Routes
+
 router.get("/getAttributes", atrributeController.get_attributes);
 router.post("/addAttribute", atrributeController.add_product_attribute);
-router.put(
+router.post(
   "/updateAttribute/:id",
   atrributeController.update_product_attribute
 );
@@ -19,4 +21,24 @@ router.get(
   atrributeController.get_product_attribute_values
 );
 
+// Attribute Value Routes
+router.get(
+  "/getAttributeValues/:id",
+  atrributeController.get_product_attribute_values
+);
+
+router.post(
+  "/addAttributeValue/:product_attribute_id",
+  atrributeController.add_product_attribute_value
+);
+
+router.put(
+  "/updateAttributeValue/:id",
+  atrributeController.update_product_attribute_value
+);
+
+router.delete(
+  "/deleteAttributeValue/:id",
+  atrributeController.delete_product_attribute_value
+);
 module.exports = router;

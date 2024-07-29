@@ -12,8 +12,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       display_type: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM("checkbox", "radio", "select"),
         allowNull: true,
+        validate: {
+          isIn: [["checkbox", "radio", "select"]],
+        },
       },
       createdAt: {
         field: "created_at",
@@ -33,6 +36,13 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true, // Enable timestamps for this model
     }
   );
+  Product_Attributes.associate = (models) => {
+    Product_Attributes.hasMany(models.Product_Attribute_Values, {
+      foreignKey: "product_attribute_id",
+      as: "attributeValues",
+      onDelete: "CASCADE",
+    });
+  };
 
   return Product_Attributes;
 };

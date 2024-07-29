@@ -1,5 +1,5 @@
-const { Product_Attributes, Product_Attributes_Values } = require("../models");
-const product_attribute_values = require("../models/product_attribute_values");
+const { where } = require("sequelize");
+const { Product_Attributes, Product_Attribute_Values } = require("../models");
 
 const get_attributes = async (req, res) => {
   try {
@@ -62,6 +62,9 @@ const delete_product_attribute = async (req, res) => {
         id: id,
       },
     }).then((data) => {
+      if (data == 0) {
+        return res.status(200).json("Product Attribute Doesn't Exist");
+      }
       return res.status(200).json("Product Attribute Entry Deleted");
     });
   } catch (error) {
@@ -72,12 +75,91 @@ const delete_product_attribute = async (req, res) => {
 const get_product_attribute_values = async (req, res) => {
   const { id } = req.params;
   try {
-    const response = await Product_Attributes_Values.findAll({
+    const response = await Product_Attribute_Values.findAll({
       where: {
         product_attribute_id: id,
       },
     });
     return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const add_product_attribute_value = async (req, res) => {
+  const { name } = req.body;
+  const { product_attribute_id } = req.params;
+
+  try {
+    // First, check if the product_attribute_id exists
+    const attributeExists = await Product_Attributes.findByPk(
+      product_attribute_id
+    );
+    if (!attributeExists) {
+      return res
+        .status(400)
+        .json({ error: "Product Attribute does not exist" });
+    }
+
+    // If it exists, create the new value
+    const newValue = await Product_Attribute_Values.create({
+      product_attribute_id,
+      name,
+    });
+
+    return res.status(200).json({
+      message: "Product Attribute Value Entry Created",
+      data: newValue,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const update_product_attribute_value = async (req, res) => {
+  const { name } = req.body;
+  const { id } = req.params;
+
+  try {
+    const newValue = await Product_Attribute_Values.update(
+      {
+        name,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+    if (newValue[0] === 0) {
+      return res
+        .status(404)
+        .json({ error: "Product Attribute Value not found" });
+    }
+
+    return res.status(200).json({
+      message: "Product Attribute Value Entry Updated",
+      data: newValue,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const delete_product_attribute_value = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Product_Attribute_Values.destroy({
+      where: {
+        id: id,
+      },
+    }).then((data) => {
+      if (data == 0) {
+        return res.status(200).json("Product Attribute Value Doesn't Exist");
+      }
+      return res.status(200).json("Product Attribute Value Entry Deleted");
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -88,5 +170,7 @@ module.exports = {
   add_product_attribute,
   update_product_attribute,
   delete_product_attribute,
-  product_attribute_values,
+  add_product_attribute_value,
+  update_product_attribute_value,
+  delete_product_attribute_value,
 };

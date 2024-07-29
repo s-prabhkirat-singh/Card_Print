@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const Product_Attributes_Values = sequelize.define(
-    "Product_Attributes_Values",
+  const Product_Attribute_Values = sequelize.define(
+    "Product_Attribute_Values",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-          model: "product_attributes",
+          model: "product_Attribute",
           key: "id",
         },
       },
@@ -27,23 +27,19 @@ module.exports = (sequelize, DataTypes) => {
         field: "updated_at",
         type: DataTypes.DATE,
       },
-      status: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
     },
     {
-      tableName: "product_attributes_values",
+      tableName: "product_attribute_values",
       timestamps: true, // Enable timestamps for this model
     }
   );
 
-  Product_Attributes_Values.associate = (models) => {
-    Product_Attributes_Values.belongsTo(models.Product_Attributes, {
+  Product_Attribute_Values.associate = (models) => {
+    Product_Attribute_Values.belongsTo(models.Product_Attributes, {
       foreignKey: "product_attribute_id",
-      as: "parentAttribute",
+      as: "attribute",
     });
   };
 
-  return Product_Attributes_Values;
+  return Product_Attribute_Values;
 };
