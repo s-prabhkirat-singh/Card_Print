@@ -1,10 +1,11 @@
 const { where } = require("sequelize");
 const { Product_Attributes, Product_Attribute_Values } = require("../models");
+const { get } = require("../routes/attributeRoutes");
 
 const get_attributes = async (req, res) => {
   try {
     const response = await Product_Attributes.findAll({
-      attributes: ["id", "name"],
+      attributes: ["id", "name", "display_type"],
     });
     return res.status(200).json(response);
   } catch (error) {
@@ -80,6 +81,16 @@ const get_product_attribute_values = async (req, res) => {
         product_attribute_id: id,
       },
     });
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const get_attribute_by_id = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const response = await Product_Attributes.findByPk(id);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -173,4 +184,5 @@ module.exports = {
   add_product_attribute_value,
   update_product_attribute_value,
   delete_product_attribute_value,
+  get_attribute_by_id,
 };

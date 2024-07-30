@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       display_type: {
         type: DataTypes.ENUM("checkbox", "radio", "select"),
         allowNull: true,
+        defaultValue: "checkbox",
         validate: {
           isIn: [["checkbox", "radio", "select"]],
         },

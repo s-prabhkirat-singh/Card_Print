@@ -6,6 +6,7 @@ const atrributeController = require("../controllers/attributeController");
 //Attribute Routes
 
 router.get("/getAttributes", atrributeController.get_attributes);
+router.get("/getAttributeById/:id", atrributeController.get_attribute_by_id);
 router.post("/addAttribute", atrributeController.add_product_attribute);
 router.post(
   "/updateAttribute/:id",
