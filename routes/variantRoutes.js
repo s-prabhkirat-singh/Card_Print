@@ -3,7 +3,10 @@ const router = express.Router();
 
 const variantController = require("../controllers/variantController");
 
-router.get("/getProductVariants", variantController.get_product_variants);
+router.get(
+  "/getProductVariantById/:id",
+  variantController.get_product_variant_by_id
+);
 
 router.post(
   "/addProductVariant",
@@ -23,8 +26,8 @@ router.put(
 );
 
 router.get(
-  "/getProductVariantById/:id",
-  variantController.get_product_variant_by_id
+  "/getProductVariantByProductId/:id",
+  variantController.get_product_variant_by_product_id
 );
 
 module.exports = router;

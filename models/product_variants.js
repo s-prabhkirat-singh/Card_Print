@@ -46,6 +46,11 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true, // Enable timestamps for this model
     }
   );
+  Product_Variants.associate = function (models) {
+    Product_Variants.belongsTo(models.Product_Attribute_Values, {
+      foreignKey: "product_attribute_value_id",
+    });
+  };
 
   return Product_Variants;
 };

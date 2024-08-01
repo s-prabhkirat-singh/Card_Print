@@ -5,6 +5,7 @@ const categoryRoutes = require("./routes/categoriesRoutes");
 const attributeRoutes = require("./routes/attributeRoutes");
 const qualityRoutes = require("./routes/qualityRoutes");
 const productRoutes = require("./routes/productRoutes");
+const variantRoutes = require("./routes/variantRoutes");
 const cors = require("cors");
 const path = require("path");
 let app = express();
@@ -24,7 +25,8 @@ app.use(
   categoryRoutes,
   attributeRoutes,
   qualityRoutes,
-  productRoutes
+  productRoutes,
+  variantRoutes
 );
 
 const port = process.env.PORT || 3000;

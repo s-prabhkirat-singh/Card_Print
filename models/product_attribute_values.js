@@ -34,12 +34,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Product_Attribute_Values.associate = (models) => {
+  Product_Attribute_Values.associate = function (models) {
     Product_Attribute_Values.belongsTo(models.Product_Attributes, {
       foreignKey: "product_attribute_id",
-      as: "attribute",
+      as: "product_attribute",
+    });
+    Product_Attribute_Values.hasMany(models.Product_Variants, {
+      foreignKey: "product_attribute_value_id",
     });
   };
-
   return Product_Attribute_Values;
 };

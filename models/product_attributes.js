@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true, // Enable timestamps for this model
     }
   );
-  Product_Attributes.associate = (models) => {
+  Product_Attributes.associate = function (models) {
     Product_Attributes.hasMany(models.Product_Attribute_Values, {
       foreignKey: "product_attribute_id",
       as: "attributeValues",
