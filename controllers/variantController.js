@@ -77,7 +77,8 @@ const delete_product_variant = async (req, res) => {
     if (!product_variant) {
       return res.status(404).json({ error: "Product variant not found" });
     }
-    await fs.unlink(`uploads/${product_variant.category_image}`, (err) => {
+    console.log(product_variant);
+    await fs.unlink(`uploads/${product_variant.product_image}`, (err) => {
       if (err) console.log("image file not present");
       else console.log(" image file deleted!");
     });
